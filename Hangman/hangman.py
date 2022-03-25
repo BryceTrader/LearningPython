@@ -1,61 +1,60 @@
 import random
 import os
 
-with open("wl.txt", 'r', encoding='utf-8') as file:
-    file = file.readlines()
-    numberOfWords = len(file) - 1
-    index = random.randint(0, numberOfWords)
-    word = list(file[index])
-
-word.pop() # remove newline character
-answerSheet = []
-lives = ['Lives:', '<3', '<3', '<3','<3', '<3', '<3','<3', '<3', '<3']
-guessed_letters = []
-
-for l in word:
-    answerSheet.append('_')
+def main():
+    game_loop()
 
 
 def game_loop():
+    lives = ['<3', '<3', '<3', '<3', '<3', '<3', '<3', '<3', '<3']
+    guessed_letters = []
+    word = get_word()
+    answer_sheet = ['_' for letters in word]
+    
     playing = True
     while playing:
-        guess = get_guess()
-        check_guess(guess)
-        playing = is_not_solved()
-        if len(lives) == 1:
+        guess = get_guess(lives, guessed_letters, answer_sheet)
+        check_guess(guess, word, answer_sheet, lives)
+        playing = answer_sheet != word
+        if not lives:
             clear_console()
             print(f'You lose. The word was {"".join(word)}.')
             break
     if not playing:
         clear_console()
-        print(f'Congrats on guessing {"".join(word)}!\nYou had {len(lives) - 1} lives left!')
+        print(f'Congrats on guessing {"".join(word)}!\nYou had {len(lives)} lives left!')
 
-def get_guess():
+def get_word():
+    with open("wl.txt", 'r', encoding='utf-8') as file:
+        file = file.readlines()
+        numberOfWords = len(file) - 1
+        index = random.randint(0, numberOfWords)
+        word = list(file[index])
+
+    word.pop() # remove newline character
+    return word
+
+def get_guess(lives, guessed_letters, answer_sheet):
     guessing = True
     guess = ''
 
-    while guessing and len(lives) > 1:
+    while guessing and lives:
         clear_console()
         print(f'Letters that have been guessed: {" ".join(guessed_letters)}\n')
-        print(' '.join(lives) + '\n')
-        print(' '.join(answerSheet) + '\n')
+        print(f"Lives: {' '.join(lives)}")
+        print(' '.join(answer_sheet) + '\n')
         guess = input('Please enter your guess: ')
 
-        guessing = has_been_guessed(guess)
-        if len(guess) != 1:
-            guessing = True
+        guessing = has_been_guessed(guess, guessed_letters)
     return guess
 
-def check_guess(guess):
+def check_guess(guess, word, answer_sheet, lives):
     if guess in word:
         for i, letter in enumerate(word):
             if guess == letter:
-                answerSheet[i] = letter
+                answer_sheet[i] = letter
     else:
         lives.pop()
-
-def is_not_solved():
-    return answerSheet != word
 
 def clear_console():
     command = 'clear'
@@ -63,10 +62,11 @@ def clear_console():
         command = 'cls'
     os.system(command)
 
-def has_been_guessed(guess):
-    if guess in guessed_letters:
+def has_been_guessed(guess, guessed_letters):
+    if guess in guessed_letters or len(guess) != 1:
         return True
     guessed_letters.append(guess)
     return False
 
-game_loop()
+if __name__ == '__main__':
+    main()
