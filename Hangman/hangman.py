@@ -10,7 +10,7 @@ def game_loop():
     guessed_letters = []
     word = get_word()
     answer_sheet = ['_' for letters in word]
-    
+
     playing = True
     while playing:
         guess = get_guess(lives, guessed_letters, answer_sheet)
@@ -27,8 +27,8 @@ def game_loop():
 def get_word():
     with open("wl.txt", 'r', encoding='utf-8') as file:
         file = file.readlines()
-        numberOfWords = len(file) - 1
-        index = random.randint(0, numberOfWords)
+        number_of_words = len(file) - 1
+        index = random.randint(0, number_of_words)
         word = list(file[index])
 
     word.pop() # remove newline character
@@ -36,7 +36,6 @@ def get_word():
 
 def get_guess(lives, guessed_letters, answer_sheet):
     guessing = True
-    guess = ''
 
     while guessing and lives:
         clear_console()
