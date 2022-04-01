@@ -30,9 +30,7 @@ def game_loop():
 def get_word():
     with open("wl.txt", 'r', encoding='utf-8') as file:
         file = file.readlines()
-        number_of_words = len(file) - 1
-        index = random.randint(0, number_of_words)
-        word = list(file[index])
+        word = list(random.choice(file))
 
     word.pop() # remove newline character
     return word
